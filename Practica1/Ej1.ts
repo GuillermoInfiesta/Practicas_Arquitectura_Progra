@@ -9,6 +9,7 @@ const BubbleSort = (arr:number[]): number[] =>{
             arr[i+1] = numAux;
             console.log("a");
             ordered = false;
+            //Prueba para ver que funcione el add . y push
         }
     }
     !ordered && BubbleSort(arr); //Si no está ordenado seguimos usando BubbleSort, de manera recursiva
