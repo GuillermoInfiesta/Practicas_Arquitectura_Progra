@@ -1,4 +1,4 @@
-const BubbleSort = (arr:number[]): number[] =>{
+export const BubbleSort = (arr:number[]): number[] =>{
     //Solucion no optima temporal 
     let ordered:boolean = true; //Boleano que será true al salir del for una vez esté ordenado el array
     let numAux: number = 0;
