@@ -1,4 +1,4 @@
-const SecurityValidator = (password: string):number => {
+export const SecurityValidator = (password: string):number => {
     const arr: string[] = password.split("");
     let safetyScore: number = 0;
     let hasLetter: boolean = false;

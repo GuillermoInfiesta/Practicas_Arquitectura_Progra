@@ -1,4 +1,4 @@
-const TimeConverter = (time: string): string =>{
+export const TimeConverter = (time: string): string =>{
 
     const minutos: string = time.substring(time.indexOf(":")+1, time.indexOf(":")+3); //Coger los minutos 
 
