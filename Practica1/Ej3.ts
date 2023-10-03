@@ -13,5 +13,4 @@ export const TimeConverter = (time: string): string =>{
         hora = hora+12;
         return ""+hora+minutos;
     }
-    //Buscar solucion mas optima, hay seguro pq lo tengo hecho muy a la guarra
 }
