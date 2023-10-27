@@ -8,11 +8,16 @@ import { getAllProducts } from './resolvers/GetAllProducts.ts';
 import { getAllClients } from './resolvers/GetAllClient.ts';
 import { postInvoice } from './resolvers/PostInvoice.ts';
 import { getInvoice } from './resolvers/GetInvoice.ts';
+import {load} from "https://deno.land/std@0.204.0/dotenv/mod.ts";
+
+const env = await load();
 
 try{
-await mongoose.connect("");
+  console.log(env.HOST_URL);
+  await mongoose.connect(env.HOST_URL || Deno.env.get("HOST_URL"));
 }catch(e){ 
   console.log(e);
+  Deno.exit(1);
 }
 console.log("Conexión establecida"); 
 //await mongoose.connect("mongodb+srv://UserClasesArquitectura:UserClasesArquitectura@cluster0.jgt9boz.mongodb.net/Practica2");
@@ -34,4 +39,4 @@ miapp
   //Añadir lo del deploy
 
 
-miapp.listen(3001);
+miapp.listen(env.PORT);
