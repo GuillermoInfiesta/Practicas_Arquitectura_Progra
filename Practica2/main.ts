@@ -14,7 +14,7 @@ const env = await load();
 
 try{
   console.log(env.HOST_URL);
-  await mongoose.connect(env.HOST_URL || Deno.env.get("HOST_URL"));
+  await mongoose.connect(env.HOST_URL || Deno.env.get("HOST_URL") || "");
 }catch(e){ 
   console.log(e);
   Deno.exit(1);

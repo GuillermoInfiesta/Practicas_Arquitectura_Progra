@@ -17,7 +17,7 @@ export const postClient = async (req: Request, res: Response): Promise<void> => 
 
     const newClient = await ClientModel.create({ //Sobra???
         name, 
-        cif: "cif",
+        cif,
     });
 
     res.status(200).send("Cliente añadido");
