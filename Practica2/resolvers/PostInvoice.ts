@@ -2,6 +2,8 @@ import {Request, Response} from 'npm:express@4.18.2';
 import { InvoiceModel, InvoiceModelType } from "../collections/invoice.ts";
 import { ClientModel } from '../collections/client.ts';
 import { ProductModel } from '../collections/product.ts';
+import { checkIdLength } from '../verifiers/checkIdLength.ts';
+
 
 export const postInvoice = async (req: Request, res: Response) => {
     const body: Partial<Omit<InvoiceModelType, "_id">> = req.body;
@@ -13,54 +15,46 @@ export const postInvoice = async (req: Request, res: Response) => {
     }
 
     try{
-        //comprobar si existe todo
-        const cliExist = await ClientModel.findOne({idCliente}).exec();
-        console.log(cliExist?.cif)
+        //Comprobar que exista el cliente
+        checkIdLength(idCliente);
+        const cliExist = await ClientModel.findOne().where("_id").equals(idCliente).exec();
         if(!cliExist)
             throw new Error ("El cliente no existe");
 
-        products.forEach(async (x)=>{
-            console.log(x);
-            const prodExists = await ProductModel.findOne({x}).exec();
-            console.log(prodExists);
+        console.log("Cliente Ok")
 
-            if(!prodExists)
-                throw new Error (`El producto: ${x} no existe`);
-        });
-        console.log("Cliente ok");
-
-        const productsPrices = products.map(async (x):Promise<number> => {
-            const priceOfProd = await ProductModel.findOne({x}).exec();
-            return priceOfProd?.price ?? 0 ;
-        });
+        //Comprobar que existan los productos
+        for(const elem of products){ //Uso un for para comprobar porque desde el foreach (mi idea inicial) no puedo
+                                     //lanzar errores ya que no los puedo coger con el catch que envuelve al foreach
+            checkIdLength(elem);
+            const prodExists = await ProductModel.findOne().where("_id").equals(elem).exec();
+            if(!prodExists){
+                throw new Error (`El producto: ${elem} no existe`);
+            }
+        }
         console.log("Productos Ok");
 
-        const totalPrice = productsPrices.reduce((accumPrice, actPrice) => {
-            let num = 0;
-            actPrice.then((value) => {num = value}); //no se guarda el cambio
-            console.log(num);
-            return accumPrice + (num ?? 0);
-        },0); 
+        //Comprobamos que la suma de price y el total cuadren, en el map devolvemos un array de Promise<precio del item>
+        const productsPrices = products.map(async (x):Promise<number> => {
+            const priceOfProd = await ProductModel.findOne().where("_id").equals(x).exec();
+            //console.log(priceOfProd.price);
+            return priceOfProd.price;
+        });
+        //Usamos el array de promesas creado arriba y con un reduce devolvemos a totalPrice la suma total de precios
+        const totalPrice = await productsPrices.reduce(async (accumPromise, actPrice) => {
+            const accumPrice = await accumPromise; // wait for the previous promise to resolve
+            const value = await actPrice;
+            const num = value ?? 0;
+            return accumPrice + num;
+          }, Promise.resolve(0));         
 
-        /*
-        const totalPrice: number = products?.map(async (x):Promise<number> => {
-                                        const priceOfProd = await ProductModel.findOne(x).exec();
-                                        return priceOfProd?.price ?? 0;
-                                    }).reduce((accPrice, actPrice) => {
-                                        const suma = actPrice.then((value => {
-                                            return accPrice+value;
-                                        }))
-                                        return suma;
-                                        //return accPrice + Promise.resolve(actPrice);
-                                    },0)*/
-                                
-        console.log(`${total} vs ${totalPrice}`);
+        //Comparamos el total que nos da el usuario al intentar post y el total real
         if(total !== totalPrice){
             throw new Error (`El total no coincice, debería ser ${totalPrice}$, no ${total}$`);
         }
         console.log("Total ok");
 
-        const newInvoice = await InvoiceModel.create({
+        await InvoiceModel.create({
             idCliente: idCliente,
             products: products,
             total: total
@@ -69,9 +63,8 @@ export const postInvoice = async (req: Request, res: Response) => {
         res.status(200).send("Invoice creada");
     }
     catch(e){
-        res.status(404).send(e);
+        res.status(404).send(e.message);
         return;
     }
-
    
-}
+}                               

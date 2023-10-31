@@ -34,12 +34,19 @@ export const postProduct = async(req:Request, res: Response) => {
         return;
     }
 
-    const newProduct = await ProductModel.create({
+    /*const newProduct = await ProductModel.create({
+        name, 
+        stock,
+        description,
+        price,
+    });*/
+    
+    await ProductModel.create({
         name, 
         stock,
         description,
         price,
     });
-
+    
     res.status(200).send("Producto añadido");
 }

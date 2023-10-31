@@ -18,4 +18,5 @@ export const getInvoice = async (req: Request, res: Response) => {
     }
     //Ahora mismo muestra los id de las cosas, cambiar para que use los id para coger los objetos en si
     res.status(200).send(exists);
+    
 }

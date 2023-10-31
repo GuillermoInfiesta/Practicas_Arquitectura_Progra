@@ -27,16 +27,14 @@ const miapp = express();
 miapp.use(express.json());
 
 miapp
-  .delete("/products/:id", deleteProduct) //Done
-  .delete("/client/:id", deleteClient) //Done
-  .get("/products", getAllProducts) //Done
-  .get("/client", getAllClients) //Done
-  .get("/invoice/:id", getInvoice) //Done (Modificar)
-  .post("/products", postProduct) // Done
-  .post("/client", postClient) //Done
-  .post("/invoice", postInvoice); //Fallo al hacer checkeos
-
-  //Añadir lo del deploy
+  .delete("/products/:id", deleteProduct) 
+  .delete("/client/:id", deleteClient)
+  .get("/products", getAllProducts) 
+  .get("/client", getAllClients) 
+  .get("/invoice/:id", getInvoice)
+  .post("/products", postProduct) 
+  .post("/client", postClient) 
+  .post("/invoice", postInvoice); 
 
 
 miapp.listen(env.PORT);

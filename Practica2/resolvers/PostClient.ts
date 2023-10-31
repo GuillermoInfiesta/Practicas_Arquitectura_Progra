@@ -15,11 +15,15 @@ export const postClient = async (req: Request, res: Response): Promise<void> => 
         return;
     }
 
-    const newClient = await ClientModel.create({ //Sobra???
+    /*
+    const newClient = await ClientModel.create({
+        name, 
+        cif,
+    });*/
+    await ClientModel.create({
         name, 
         cif,
     });
-
     res.status(200).send("Cliente añadido");
 
 }
