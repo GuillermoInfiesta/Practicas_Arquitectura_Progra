@@ -40,3 +40,5 @@ miapp
 
 
 miapp.listen(env.PORT);
+
+//Puedo envolver todo esto con un try catch¿?¿?, asi me ahora repetir escribirlo en todos lados
