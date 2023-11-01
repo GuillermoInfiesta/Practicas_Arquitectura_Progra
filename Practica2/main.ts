@@ -17,7 +17,7 @@ try{
   await mongoose.connect(env.HOST_URL || Deno.env.get("HOST_URL") || "");
 }catch(e){ 
   console.log(e);
-  Deno.exit(1);
+  //Deno.exit(1);
 }
 console.log("Conexión establecida"); 
  
