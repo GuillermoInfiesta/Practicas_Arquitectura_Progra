@@ -11,19 +11,15 @@ export const postClient = async (req: Request, res: Response): Promise<void> => 
     const exists = await ClientModel.findOne({cif}).exec();
 
     if(exists){
-        res.status(303).send("El cliente ya existe en la BBDD");
+        res.status(303).send("Ya existe un cliente con el mismo cif");
         return;
     }
 
-    /*
-    const newClient = await ClientModel.create({
-        name, 
-        cif,
-    });*/
     await ClientModel.create({
         name, 
         cif,
     });
+
     res.status(200).send("Cliente añadido");
 
 }

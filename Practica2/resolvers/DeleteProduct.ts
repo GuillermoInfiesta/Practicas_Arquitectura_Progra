@@ -4,14 +4,14 @@ import { checkIdLength } from '../verifiers/checkIdLength.ts';
 
 export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
     const id = req.params.id;
+    
     try{
         checkIdLength(id);
     }catch(e){
-        console.log(e.message);
         res.status(400).send(e.message);
         return;
     }
-    //Copiar el borrar de la api rest para los casos en los que las id no son de 24 hex
+
     const deleted = await ProductModel.deleteOne().where("_id").equals(id).exec();
      
     if(deleted.deletedCount == 0){

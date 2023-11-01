@@ -37,12 +37,11 @@ export const postInvoice = async (req: Request, res: Response) => {
         //Comprobamos que la suma de price y el total cuadren, en el map devolvemos un array de Promise<precio del item>
         const productsPrices = products.map(async (x):Promise<number> => {
             const priceOfProd = await ProductModel.findOne().where("_id").equals(x).exec();
-            //console.log(priceOfProd.price);
             return priceOfProd.price;
         });
         //Usamos el array de promesas creado arriba y con un reduce devolvemos a totalPrice la suma total de precios
         const totalPrice = await productsPrices.reduce(async (accumPromise, actPrice) => {
-            const accumPrice = await accumPromise; // wait for the previous promise to resolve
+            const accumPrice = await accumPromise; // Esperar a que termine la anterior invoice
             const value = await actPrice;
             const num = value ?? 0;
             return accumPrice + num;
@@ -54,13 +53,13 @@ export const postInvoice = async (req: Request, res: Response) => {
         }
         console.log("Total ok");
 
-        await InvoiceModel.create({
+        const newInvoice = await InvoiceModel.create({
             idCliente: idCliente,
             products: products,
             total: total
         });
 
-        res.status(200).send("Invoice creada");
+        res.status(200).send(`Invoice creada, id: ${newInvoice._id}`);
     }
     catch(e){
         res.status(404).send(e.message);
