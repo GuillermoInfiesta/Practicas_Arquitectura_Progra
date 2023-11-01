@@ -20,7 +20,6 @@ try{
   Deno.exit(1);
 }
 console.log("Conexión establecida"); 
-//await mongoose.connect("mongodb+srv://UserClasesArquitectura:UserClasesArquitectura@cluster0.jgt9boz.mongodb.net/Practica2");
  
 const miapp = express();
 
@@ -37,6 +36,4 @@ miapp
   .post("/invoice", postInvoice); 
 
 
-miapp.listen(env.PORT);
-
-//Puedo envolver todo esto con un try catch¿?¿?, asi me ahora repetir escribirlo en todos lados
+miapp.listen(0+env.PORT);
