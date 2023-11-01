@@ -16,7 +16,7 @@ try{
   console.log(env.HOST_URL);
   await mongoose.connect(env.HOST_URL || Deno.env.get("HOST_URL") || "");
 }catch(e){ 
-  console.log(e);
+  console.log(e.message);
   //Deno.exit(1);
 }
 console.log("Conexión establecida"); 
@@ -35,5 +35,10 @@ miapp
   .post("/client", postClient) 
   .post("/invoice", postInvoice); 
 
+try{
+  console.log(env.PORT);
+  miapp.listen(env.PORT);
+}catch(e){
+  console.log(e.message);
+}
 
-miapp.listen(env.PORT);
