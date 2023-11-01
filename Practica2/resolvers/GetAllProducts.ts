@@ -3,7 +3,8 @@ import {ProductModel } from "../collections/product.ts";
 
 export const getAllProducts = async (req: Request, res: Response): Promise<void> => {
     if(!ProductModel.exists){
-        res.status(404).send("No existe un almacen de productos")
+        res.status(404).send("No existe un almacen de productos");
+        return;
     }
     const products = await ProductModel.find({}).exec();
     if( products.length < 1){

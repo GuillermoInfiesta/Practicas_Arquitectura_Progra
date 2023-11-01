@@ -4,7 +4,8 @@ import { ClientModel } from "../collections/client.ts";
 export const getAllClients = async (req: Request, res: Response): Promise<void> => {
     //Comprobar si el modelo existe
     if(!ClientModel.exists){
-        res.status(404).send("No existe un almacen de clientes")
+        res.status(404).send("No existe un almacen de clientes");
+        return;
     }
     const clientes = await ClientModel.find({}).exec();
 

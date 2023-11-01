@@ -9,6 +9,7 @@ export const getInvoice = async (req: Request, res: Response) => {
         checkIdLength(id);
     }catch(e){
         res.status(400).send(e.message);
+        return;
     }
 
     const exists = await InvoiceModel.findOne().where("_id").equals(id).exec();
