@@ -35,10 +35,7 @@ miapp
   .post("/client", postClient) 
   .post("/invoice", postInvoice); 
 
-try{
-  console.log(env.PORT);
-  miapp.listen(env.PORT);
-}catch(e){
-  console.log(e.message);
-}
+
+miapp.listen(3000);
+
 
