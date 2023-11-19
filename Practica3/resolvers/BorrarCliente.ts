@@ -7,10 +7,8 @@ export const BorrarCliente = async(req: Request, res: Response) => {
     const idCliente = req.params.id;
 
     const hipotecasCliente = await HipotecaModel.find({idCliente: idCliente}).exec();
-
-    //console.log(hipotecasCliente);
     
-    if(hipotecasCliente){
+    if(hipotecasCliente.length !== 0){
         res.status(400).send(`El cliente aun tiene hipotecas a su nombre, por favor complete sus pagos para poder eliminar el cliente`);
         return;
     }
@@ -24,10 +22,8 @@ export const BorrarCliente = async(req: Request, res: Response) => {
 
     if(cliente.idGestor !== ""){
         const gestor = await GestorModel.findOne().where("_id").equals(cliente.idGestor).exec();
-        /*const newIdClientes = gestor.idClientes;
-        newIdClientes.splice(newIdClientes.indexOf(idCliente),1);*/
         const newNumeroClientes = gestor.numeroClientes - 1;
-        await GestorModel.findOneAndUpdate({_id: cliente.idGestor},{/*idClientes: newIdClientes,*/ numeroClientes:newNumeroClientes}).exec();
+        await GestorModel.findOneAndUpdate({_id: cliente.idGestor},{numeroClientes:newNumeroClientes}).exec();
     }
 
     const deletedElements = await ClienteModel.deleteOne().where("_id").equals(idCliente).exec();

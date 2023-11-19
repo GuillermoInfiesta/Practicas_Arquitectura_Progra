@@ -9,7 +9,7 @@ import { IngresarDinero } from './resolvers/IngresarDinero.ts';
 import { EnviarDinero } from './resolvers/EnviarDinero.ts';
 import { CrearHipoteca } from './resolvers/CrearHipoteca.ts';
 import { AmortizarHipoteca } from './resolvers/AmortizarHipoteca.ts';
-//import "./resolvers/IngresarXTiempo.ts"
+//import "./resolvers/IngresarXTiempo.ts" //Descomentar para que se activen
 //import "./resolvers/AmortizarXTiempo.ts"
 
 const env = await load();
@@ -25,16 +25,16 @@ const miapp = express();
 
 miapp.use(express.json());
 
-//Optimizar los metodos
+//Optimizar los métodos
 miapp
   .post("/cliente", CrearCliente) //Done por ahora
-  .post("/hipoteca", CrearHipoteca) //Done por ahora
-  .post("/gestor", CrearGestor) //Done por ahora
-  .delete("/cliente/:id", BorrarCliente) //Done por ahora
-  .put("/cliente/:idSender/:idReceiver/:cantidadEnviada", EnviarDinero) //Done por ahora
-  .put("/cliente/:id/:cantidadIngresada", IngresarDinero) //Done por ahora
-  .put("/asignar/:idGestor/:idCliente", AsignarGestor) //Done por ahora
-  .put("/hipoteca/:idHipoteca", AmortizarHipoteca) //Done por ahora
+  .post("/hipoteca", CrearHipoteca) //Done
+  .post("/gestor", CrearGestor) //Done
+  .delete("/cliente/:id", BorrarCliente) //Done
+  .put("/cliente/:idSender/:idReceiver/:cantidadEnviada", EnviarDinero) //Done
+  .put("/cliente/:id/:cantidadIngresada", IngresarDinero) //Done
+  .put("/asignar/:idGestor/:idCliente", AsignarGestor) //Done
+  .put("/hipoteca/:idHipoteca", AmortizarHipoteca) //Done
 
 
 miapp.listen(3000)

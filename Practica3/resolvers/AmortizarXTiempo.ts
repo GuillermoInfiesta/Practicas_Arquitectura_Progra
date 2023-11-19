@@ -9,7 +9,7 @@ setInterval(async () => { //medio minuto entre pagos de cuotas
         const cliente = await ClienteModel.findById(hipoteca.idCliente).exec();
         
         if(cliente.dineroCuenta < hipoteca.pagoCuota){
-            console.log(`El cliente ${hipoteca.idCliente} no ha podido pagar su cuota mensual de la hipoteca ${hipoteca._id} por falta de dinero`);
+            console.log(`El cliente ${hipoteca.idCliente} no ha podido pagar su cuota mensual de la hipoteca ${hipoteca._id} por falta de dinero (${cliente.dineroCuenta}-${hipoteca.pagoCuota})`);
             //Error
             return;
         }
@@ -24,7 +24,7 @@ setInterval(async () => { //medio minuto entre pagos de cuotas
             return;
         }
 
-        await HipotecaModel.findOneAndUpdate({_id: hipoteca._id},{total: newTotal, cuotas: newCuotas}).exec;
+        await HipotecaModel.findOneAndUpdate({_id: hipoteca._id},{total: newTotal, cuotas: newCuotas}).exec();
         console.log(`Se ha realizado el pago correctamente, a la hipoteca ${hipoteca._id} le quedan ${newCuotas} pagos de ${hipoteca.pagoCuota}$`);
     }))
 },0.5*60*1000)
