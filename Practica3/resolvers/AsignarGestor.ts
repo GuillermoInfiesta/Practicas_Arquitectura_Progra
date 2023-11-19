@@ -29,12 +29,11 @@ export const AsignarGestor = async (req:Request, res:Response) => {
         return;
     }
 
-
     try{
-        const newIdClientes = gestor.idClientes;
-        newIdClientes.push(idCliente);
+        //const newIdClientes = gestor.idClientes;
+        //newIdClientes.push(idCliente);
         const newNumeroClientes = gestor.numeroClientes + 1;
-        await GestorModel.findOneAndUpdate({_id: idGestor}, {idClientes: newIdClientes, numeroClientes: newNumeroClientes}).exec();
+        await GestorModel.findOneAndUpdate({_id: idGestor}, {/*idClientes: newIdClientes,*/ numeroClientes: newNumeroClientes}).exec();
         await ClienteModel.findOneAndUpdate({_id: idCliente},{idGestor: idGestor}).exec();
     }catch(e){
         res.status(400).send(e.message);

@@ -14,6 +14,8 @@ export const AmortizarHipoteca = async (req: Request, res: Response) => {
 
     const cliente = await ClienteModel.findOne().where("_id").equals(hipoteca.idCliente).exec();
 
+    //Aunque sale rojo el cliente va a existir siempre, ya que no se puede crear una hipoteca sin cliente, y no se puede eliminar un cliente si aun
+    //tiene hipotecas
     if(cliente.dineroCuenta < hipoteca.pagoCuota){
         res.status(400).send(`El cliente ${hipoteca.idCliente} no ha podido pagar su cuota mensual de la hipoteca ${idHipoteca} por falta de dinero`);
         return;

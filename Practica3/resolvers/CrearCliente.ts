@@ -11,6 +11,7 @@ export const CrearCliente = async (req: Request, res: Response) => {
         return;
     }
 
+    /*
     const exists = await ClienteModel.findOne().where("dni").equals(dni).exec();
     if(exists){
         res.send(400).send(`El cliente de dni ${dni} ya existe`);
@@ -33,26 +34,33 @@ export const CrearCliente = async (req: Request, res: Response) => {
             return;
         }
     }
-
-    const newCliente = await ClienteModel.create({
-        nombre, 
-        dni,
-        correo,
-        telefono,
-        dineroCuenta,
-        idGestor
-    })
+    */
+   try{
+        /*const newCliente =*/ await ClienteModel.create({
+            nombre, 
+            dni,
+            correo,
+            telefono,
+            dineroCuenta,
+            idGestor
+        })
     
-    if(idGestor){
-        const gestor = await GestorModel.findOne().where("_id").equals(idGestor).exec();
-        //Ya se que el gestor existe porque sino hubiera dado error y no llegariamos asta aqui
-        const newIdClientes = gestor.idClientes;
-        newIdClientes.push(String(newCliente._id));
-        const newNumeroClientes = gestor.numeroClientes+1;
+        /*if(idGestor){ Si quiero poder crear cliente con gestor directamente desmutear y tocar aqui
+            const gestor = await GestorModel.findOne().where("_id").equals(idGestor).exec();
+            //Ya se que el gestor existe porque sino hubiera dado error y no llegariamos asta aqui
+            const newIdClientes = gestor.idClientes;
+            newIdClientes.push(String(newCliente._id));
+            const newNumeroClientes = gestor.numeroClientes+1;
+    
+            GestorModel.findOneAndUpdate({_id:idGestor},{idClientes: newIdClientes, numeroClientes: newNumeroClientes }).exec();
+        }*/
+    
+        res.status(200).send("Cliente creado y gestor actualizado (en caso de tener)")
+    
 
-        GestorModel.findOneAndUpdate({_id:idGestor},{idClientes: newIdClientes, numeroClientes: newNumeroClientes }).exec();
+    }catch(e){
+        res.status(400).send(e.message);
+        return;
     }
-
-    res.status(200).send("Cliente creado y gestor actualizado (en caso de tener)")
 
 }

@@ -9,6 +9,8 @@ import { IngresarDinero } from './resolvers/IngresarDinero.ts';
 import { EnviarDinero } from './resolvers/EnviarDinero.ts';
 import { CrearHipoteca } from './resolvers/CrearHipoteca.ts';
 import { AmortizarHipoteca } from './resolvers/AmortizarHipoteca.ts';
+//import "./resolvers/IngresarXTiempo.ts"
+//import "./resolvers/AmortizarXTiempo.ts"
 
 const env = await load();
 
@@ -23,7 +25,7 @@ const miapp = express();
 
 miapp.use(express.json());
 
-//Optimizar los metodos y ELIMINAR REDUNDANCIA
+//Optimizar los metodos
 miapp
   .post("/cliente", CrearCliente) //Done por ahora
   .post("/hipoteca", CrearHipoteca) //Done por ahora
@@ -33,6 +35,7 @@ miapp
   .put("/cliente/:id/:cantidadIngresada", IngresarDinero) //Done por ahora
   .put("/asignar/:idGestor/:idCliente", AsignarGestor) //Done por ahora
   .put("/hipoteca/:idHipoteca", AmortizarHipoteca) //Done por ahora
+
 
 miapp.listen(3000)
 

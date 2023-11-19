@@ -20,7 +20,7 @@ export const EnviarDinero = async (req: Request, res: Response) => {
     }
 
     if(cantidadEnviada <= 0){
-        res.status(400).send(`La cantidad a enviar no puede ser menor o igual que 0, en tu caso es ${cantidadEnviada}`);
+        res.status(400).send(`La cantidad a enviar no puede ser menor o igual que 0, en tu caso es ${cantidadEnviada}$`);
         return;
     }
 
@@ -29,6 +29,7 @@ export const EnviarDinero = async (req: Request, res: Response) => {
         res.status(400).send(`No se puede completar el envio, el sender no cuenta con el dinero suficiente`);
         return;
     }
+    
     const newDineroCuentaReceiver = receiver.dineroCuenta + cantidadEnviada;
     try{
         await ClienteModel.findOneAndUpdate({_id: idSender},{dineroCuenta: newDineroCuentaSender}).exec();
