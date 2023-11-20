@@ -1,6 +1,7 @@
 import {Request, Response} from "npm:express@4.18.2"
 import { HipotecaModel } from '../collections/Hipoteca.ts';
 import { ClienteModel } from '../collections/Cliente.ts';
+import { GuardarMovimiento } from './GuardarMovimiento.ts';
 
 export const AmortizarHipoteca = async (req: Request, res: Response) => {
     const idHipoteca = req.params.idHipoteca;
@@ -28,12 +29,25 @@ export const AmortizarHipoteca = async (req: Request, res: Response) => {
 
     if(newCuotas === 0){
         await HipotecaModel.findOneAndDelete().where("_id").equals(idHipoteca).exec();
+        try{
+            await GuardarMovimiento(hipoteca.idCliente, idHipoteca, hipoteca.pagoCuota, `Pago de cuota de una hipoteca`)
+        }catch(e){
+            res.status(400).send(e.message);
+            return;
+        }
         res.status(200).send(`Enhorabuena, se ha completado el pago de la hipoteca ${idHipoteca}`);
         return;
     }
 
     const newTotal = hipoteca.total - hipoteca.pagoCuota;
     await HipotecaModel.findOneAndUpdate({_id: idHipoteca},{total: newTotal, cuotas: newCuotas});
+
+    try{
+        await GuardarMovimiento(hipoteca.idCliente, idHipoteca, hipoteca.pagoCuota, `Pago de cuota de una hipoteca`)
+    }catch(e){
+        res.status(400).send(e.message);
+        return;
+    }
 
     res.status(200).send(`Se ha realizado el pago correctamente, a la hipoteca ${idHipoteca} le quedan ${newCuotas} pagos de ${hipoteca.pagoCuota}$`)
 }

@@ -1,5 +1,6 @@
 import {Request, Response} from "npm:express@4.18.2"
 import { ClienteModel } from '../collections/Cliente.ts';
+import { GuardarMovimiento } from './GuardarMovimiento.ts';
 
 export const EnviarDinero = async (req: Request, res: Response) => {
     const idSender = req.params.idSender;
@@ -34,6 +35,9 @@ export const EnviarDinero = async (req: Request, res: Response) => {
     try{
         await ClienteModel.findOneAndUpdate({_id: idSender},{dineroCuenta: newDineroCuentaSender}).exec();
         await ClienteModel.findOneAndUpdate({_id: idReceiver},{dineroCuenta: newDineroCuentaReceiver}).exec();
+
+        await GuardarMovimiento(String(idSender), String(idReceiver), cantidadEnviada, `Transferencia entre clientes`)
+
     }catch(e){
         res.status(400).send(e.message);
         return;

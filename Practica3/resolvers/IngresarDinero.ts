@@ -1,5 +1,6 @@
 import {Request, Response} from "npm:express@4.18.2"
 import { ClienteModel } from '../collections/Cliente.ts';
+import { GuardarMovimiento } from './GuardarMovimiento.ts';
 
 export const IngresarDinero = async(req: Request, res: Response) => {
     const id = req.params.id;
@@ -18,6 +19,13 @@ export const IngresarDinero = async(req: Request, res: Response) => {
     const newDineroCuenta = cliente.dineroCuenta + cantidadIngresada;
 
     await ClienteModel.findOneAndUpdate({_id: id}, {dineroCuenta: newDineroCuenta}).exec();
+
+    try{
+        await GuardarMovimiento("",id,cantidadIngresada,`Ingreso de dinero`);
+    }catch(e){
+        res.status(400).send(e.message);
+        return;
+    }
     
     res.status(200).send(`Se han añadido ${cantidadIngresada}$ al cliente ${id}`);
 }

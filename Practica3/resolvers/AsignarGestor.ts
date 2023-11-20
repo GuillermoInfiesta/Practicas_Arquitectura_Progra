@@ -29,6 +29,11 @@ export const AsignarGestor = async (req:Request, res:Response) => {
         return;
     }
 
+    if(cliente.idGestor === idGestor){
+        res.status(400).send(`El cliente ${idCliente} ya esta siendo gestionado por el gestor ${idGestor}`);
+        return;
+    }
+
     try{
         const newNumeroClientes = gestor.numeroClientes + 1;
         await GestorModel.findOneAndUpdate({_id: idGestor}, {numeroClientes: newNumeroClientes}).exec();
