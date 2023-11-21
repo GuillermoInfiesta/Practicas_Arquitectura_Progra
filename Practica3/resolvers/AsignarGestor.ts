@@ -19,18 +19,15 @@ export const AsignarGestor = async (req:Request, res:Response) => {
         return;
     }
 
+    //El gestor puede tener, como máximo, 10 clientes
     if(gestor.numeroClientes === 10){
         res.status(400).send(`El gestor ${idGestor} ya ha alcanzado su limite de clientes`);
         return;
     }
 
+    //No se puede cambiar el gestor de un cliente si ya tiene uno
     if(cliente.idGestor !== ""){
         res.status(400).send(`El cliente ${idCliente} ya tiene un gestor y no se puede cambiar`);
-        return;
-    }
-
-    if(cliente.idGestor === idGestor){
-        res.status(400).send(`El cliente ${idCliente} ya esta siendo gestionado por el gestor ${idGestor}`);
         return;
     }
 

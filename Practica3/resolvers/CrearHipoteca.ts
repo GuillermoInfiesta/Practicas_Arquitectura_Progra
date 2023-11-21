@@ -14,9 +14,9 @@ export const CrearHipoteca = async (req: Request, res: Response) => {
     try{
         await HipotecaModel.create({
                 total,
-                cuotas: 20,
+                cuotas: 20, //Las cuotas siempre inician como 20
                 idCliente,
-                pagoCuota: total/20
+                pagoCuota: total/20 
         });
         res.status(200).send("Se ha creado la hipoteca");
     }catch(e){

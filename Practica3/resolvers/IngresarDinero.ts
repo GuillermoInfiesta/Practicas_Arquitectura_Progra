@@ -11,6 +11,8 @@ export const IngresarDinero = async(req: Request, res: Response) => {
         res.status(404).send(`No se ha encontrado ningun cliente con id ${id}`);
         return;
     }
+
+    //Se debe ingresar una cantidad positiva de dinero
     if(cantidadIngresada <= 0){
         res.status(400).send(`La cantidad a ingresar no puede ser menor o igual que 0, en tu caso es ${cantidadIngresada}`);
         return;

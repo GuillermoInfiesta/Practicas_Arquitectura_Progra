@@ -11,6 +11,8 @@ const MovimientoSchema = new Schema ({
     detalles: {type: String, required: true}
 }, {timestamps: true});
 
+//Validaremos el emisor, receptor y dinero antes de añadir a la base de datos, en caso de que un valor no sea valído saltará un error y se detendrá la creación
+
 MovimientoSchema.path("idSender").validate(async (id) => {
     if(id === "") return true;
     const sender = await ClienteModel.findById(id).exec();

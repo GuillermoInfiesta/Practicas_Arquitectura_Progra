@@ -12,6 +12,7 @@ const ClienteSchema = new Schema({
     idGestor: {type: String, required: false, default: ""},
 });
 
+//Validaremos el dni, dinero y gestor antes de añadir a la base de datos, en caso de que un valor no sea valído saltará un error y se detendrá la creación
 ClienteSchema.path("dni").validate(async (dni) => {
     const exists = await ClienteModel.findOne().where("dni").equals(dni).exec();
     if(exists) throw new Error(`Ya existe un cliente con el dni ${dni}`);

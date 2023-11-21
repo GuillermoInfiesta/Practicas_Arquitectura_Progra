@@ -9,11 +9,12 @@ export const CrearGestor = async(req: Request, res: Response) => {
         res.status(400).send("Faltan datos necesarios sobre el gestor");
         return;
     }
+
     try{
         await GestorModel.create({
             nombre: nombre,
             dni: dni,
-            numeroClientes: 0
+            numeroClientes: 0 //Los gestores se crean sin clientes
         });
     }catch(e){
         res.status(400).send(e.message);

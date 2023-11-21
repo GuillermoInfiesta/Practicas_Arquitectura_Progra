@@ -17,7 +17,7 @@ export const AmortizarHipoteca = async (req: Request, res: Response) => {
 
     //Aunque sale rojo el cliente va a existir siempre, ya que no se puede crear una hipoteca sin cliente, y no se puede eliminar un cliente si aun
     //tiene hipotecas
-    if(cliente.dineroCuenta < hipoteca.pagoCuota){
+    if(cliente.dineroCuenta < hipoteca.pagoCuota){ //Si el cliente no puede pagar detenemos la amortización
         res.status(400).send(`El cliente ${hipoteca.idCliente} no ha podido pagar su cuota mensual de la hipoteca ${idHipoteca} por falta de dinero`);
         return;
     }
@@ -27,6 +27,7 @@ export const AmortizarHipoteca = async (req: Request, res: Response) => {
     const newDineroCuentaCliente = cliente.dineroCuenta - hipoteca.pagoCuota;
     await ClienteModel.findOneAndUpdate({_id: hipoteca.idCliente},{dineroCuenta: newDineroCuentaCliente});
 
+    //Si esta era la ultima cuota eliminaremos la hipoteca
     if(newCuotas === 0){
         await HipotecaModel.findOneAndDelete().where("_id").equals(idHipoteca).exec();
         try{

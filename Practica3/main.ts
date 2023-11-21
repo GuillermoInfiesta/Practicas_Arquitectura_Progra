@@ -34,16 +34,15 @@ const miapp = express();
 
 miapp.use(express.json());
 
-//Optimizar los métodos
 miapp
-  .post("/cliente", CrearCliente) //Done 
-  .post("/hipoteca", CrearHipoteca) //Done
-  .post("/gestor", CrearGestor) //Done
-  .delete("/cliente/:id", BorrarCliente) //Done
-  .put("/cliente/:idSender/:idReceiver/:cantidadEnviada", EnviarDinero) //Done
-  .put("/cliente/:id/:cantidadIngresada", IngresarDinero) //Done
-  .put("/asignar/:idGestor/:idCliente", AsignarGestor) //Done
-  .put("/hipoteca/:idHipoteca", AmortizarHipoteca) //Done
+  .post("/cliente", CrearCliente)
+  .post("/hipoteca", CrearHipoteca)
+  .post("/gestor", CrearGestor)
+  .delete("/cliente/:id", BorrarCliente)
+  .put("/cliente/:idSender/:idReceiver/:cantidadEnviada", EnviarDinero)
+  .put("/cliente/:id/:cantidadIngresada", IngresarDinero)
+  .put("/asignar/:idGestor/:idCliente", AsignarGestor)
+  .put("/hipoteca/:idHipoteca", AmortizarHipoteca)
   .get("/cliente", GetAllClientes)
   .get("/cliente/:id", GetCliente)
   .get("/gestor", GetAllGestores)

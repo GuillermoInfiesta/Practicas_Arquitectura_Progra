@@ -9,6 +9,8 @@ export const GetCliente = async(req: Request, res: Response) => {
         res.status(404).send(`No se encuentra ningun cliente con id ${id}`);
         return;
     }
+    
+    //Buscamos todas las hipotecas que pertenecen a nuestro cliente para hacer más cómodo saber que hipotecas tiene cada cliente
     const hipotecas = await HipotecaModel.find().where("idCliente").equals(id).exec();
     
     res.status(200).send({

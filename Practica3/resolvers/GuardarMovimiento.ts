@@ -1,5 +1,6 @@
 import { MovimientoModel } from '../collections/Movimiento.ts';
 
+//Funcion utilizada para almacenar un movimiento bancario (engreso, envio, pago) en la base de datos
 export const GuardarMovimiento = async(idSender: string, idReceiver: string, dinero: number, detalles: string) => {
     try{
         await MovimientoModel.create({

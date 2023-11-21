@@ -7,6 +7,7 @@ export const GetAllHipotecas = async(req: Request, res: Response) => {
         return{
             id: hipoteca._id,
             idCliente: hipoteca.idCliente,
+            //añadir aqui idGestor sacandolo del cliente?
             total_restante: hipoteca.total,
             cuotas_restantes: hipoteca.cuotas
         }

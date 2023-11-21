@@ -9,6 +9,8 @@ const GestorSchema = new Schema ({
     numeroClientes: {type: Number, required: false, default: 0}
 });
 
+//Validaremos el dni antes de añadir a la base de datos, en caso de que un valor no sea valído saltará un error y se detendrá la creación
+
 GestorSchema.path("dni").validate(async (dni) => {
     const exists = await GestorModel.findOne().where("dni").equals(dni).exec();
     if(exists) throw new Error(`Ya existe un gestor con el id ${dni}`);
