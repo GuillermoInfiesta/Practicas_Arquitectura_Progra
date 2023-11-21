@@ -14,7 +14,6 @@ const MovimientoSchema = new Schema ({
 MovimientoSchema.path("idSender").validate(async (id) => {
     if(id === "") return true;
     const sender = await ClienteModel.findById(id).exec();
-    //if(!sender) throw new Error(`El sender de id ${id} no se encuentra en la base de datos`);
     if(!sender) return false;
     return true;
 })
@@ -35,7 +34,9 @@ MovimientoSchema.path("dinero").validate((dinero) => {
 export type MovimientoModelType = {
     idSender: string,
     idReceiver: string,
-    detalles: string;
+    dinero: number,
+    detalles: string,
+    createdAt: mongoose.Date
 };
 
 export const MovimientoModel = mongoose.model<MovimientoModelType>(

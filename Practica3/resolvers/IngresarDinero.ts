@@ -21,7 +21,7 @@ export const IngresarDinero = async(req: Request, res: Response) => {
     await ClienteModel.findOneAndUpdate({_id: id}, {dineroCuenta: newDineroCuenta}).exec();
 
     try{
-        await GuardarMovimiento("",id,cantidadIngresada,`Ingreso de dinero`);
+        await GuardarMovimiento("",id,cantidadIngresada,`Ingreso`);
     }catch(e){
         res.status(400).send(e.message);
         return;
