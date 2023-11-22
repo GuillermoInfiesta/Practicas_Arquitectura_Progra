@@ -16,7 +16,7 @@ import { GetGestor } from './resolvers/GetGestor.ts';
 import { GetAllHipotecas } from './resolvers/GetAllHipotecas.ts';
 import { GetMovimientos } from "./resolvers/GetMovimientos.ts";
 import "./resolvers/IngresarXTiempo.ts" //Descomentar para que se activen
-//import "./resolvers/AmortizarXTiempo.ts"
+import "./resolvers/AmortizarXTiempo.ts"
 
 
 
