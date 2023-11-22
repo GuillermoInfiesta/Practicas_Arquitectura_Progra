@@ -23,9 +23,9 @@ setInterval(async () => {
 
         //Si esta era la ultima cuota eliminamos la hipoteca
         if(newCuotas === 0){
-            await HipotecaModel.findOneAndDelete().where("_id").equals(hipoteca._id).exec();
             try{
-                await GuardarMovimiento(hipoteca.idCliente, String(hipoteca._id), hipoteca.pagoCuota, `Pago de cuota de una hipoteca`)
+                await GuardarMovimiento(hipoteca.idCliente, String(hipoteca._id), hipoteca.pagoCuota, `Pago de cuota de una hipoteca`);
+                await HipotecaModel.findOneAndDelete().where("_id").equals(hipoteca._id).exec();
             }catch(e){
               return;
             }

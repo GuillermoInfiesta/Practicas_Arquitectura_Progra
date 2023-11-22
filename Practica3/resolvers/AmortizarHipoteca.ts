@@ -29,9 +29,9 @@ export const AmortizarHipoteca = async (req: Request, res: Response) => {
 
     //Si esta era la ultima cuota eliminaremos la hipoteca
     if(newCuotas === 0){
-        await HipotecaModel.findOneAndDelete().where("_id").equals(idHipoteca).exec();
         try{
-            await GuardarMovimiento(hipoteca.idCliente, idHipoteca, hipoteca.pagoCuota, `Pago de cuota de una hipoteca`)
+            await GuardarMovimiento(hipoteca.idCliente, idHipoteca, hipoteca.pagoCuota, `Pago de cuota de una hipoteca`);
+            await HipotecaModel.findOneAndDelete().where("_id").equals(idHipoteca).exec();
         }catch(e){
             res.status(400).send(e.message);
             return;

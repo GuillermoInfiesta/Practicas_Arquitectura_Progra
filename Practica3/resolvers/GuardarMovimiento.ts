@@ -10,6 +10,6 @@ export const GuardarMovimiento = async(idSender: string, idReceiver: string, din
             detalles: detalles
         })
     }catch(e){
-        throw new Error("No se ha podido guardar el movimiento");
+        throw new Error(e.message);
     }
 }
