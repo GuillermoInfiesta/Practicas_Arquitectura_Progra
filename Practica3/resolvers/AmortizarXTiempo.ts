@@ -40,4 +40,4 @@ setInterval(async () => {
           return;
         }
     }))
-},0.5*60*1000) //0.5 minutos ahora mismo, cambiar a 5 minutos
+},5*60*1000) //0.5 minutos ahora mismo, cambiar a 5 minutos
