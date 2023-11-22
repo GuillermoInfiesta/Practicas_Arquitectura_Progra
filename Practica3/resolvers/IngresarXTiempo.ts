@@ -10,7 +10,6 @@ setInterval(async () => { //medio minuto entre ingresos
             await GuardarMovimiento("",String(cliente._id),10000,`Ingreso`)
         }catch(e){
             return;
-        }
-        
+        }        
     }))
 },5*60*1000)
