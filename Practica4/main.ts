@@ -32,38 +32,21 @@ const miapp = express();
 miapp.use(express.json());
 
 miapp
-  .get("/worker/:id", getWorker) // Done (checkear mas adelante)
-  .get("/business/:id", getBusiness) //Done (checkear mas adelante)
-  .get("/task/:id", getTask) //Done (checkear mas adelante)
-  .delete("/worker/:id", deleteWorker) //Checkeos y eliminar en dependencias
-  .delete("/business/:id", deleteBusiness) //Checkeos y eliminar en dependencias
-  .delete("/task/:id", deleteTask) //Checkeos y eliminar en dependencias
-  .get("/worker", getAllWorkers) //Done (checkear mas adelante)
-  .get("/business", getAllBusiness) //Done (checkear mas adelante)
-  .get("/task", getAllTasks) //Done (checkear mas adelante)
-  .post("/worker", postWorker) //Creo que done
-  .post("/business", postBusiness) //Creo que done
-  .post("/task", postTask) //Creo que done
-  .put("/business/:id/fire/:workerId", fireWorker) //Creo que done
-  .put("/business/:id/hire/:workerId", hireWorker) //Creo que done
-  .put("/task/:id?status=x", changeStatus) //No funciona el endpoint ?¿?¿?
-  /*
-/worker/:id -> Devolverá el trabajador que corresponde al id
-/business/:id -> Devolverá la empresa que corresponde al id
-/task/id -> Devolverá la tarea que corresponde al id
-/worker/:id -> Eliminará el trabajador que corresponde al id
-/business/:id -> Eliminará la empresa que corresponde al id
-/task/:id -> Eliminará la tarea que corresponde al id
-/worker - > Deberá devolver todos los trabajadores
-/business - > Deberá devolver todas las empresas
-/task- > Deberá devolver todas las tareas
-/worker - > Deberá crear un trabajador
-/business - > Deberá crear una empresa
-/task- > Deberá crear una tarea
-/business/:id/fire/:workerId -> Deberá despedir de la empresa al trabajador que corresponde al id
-/business/:id/hire/:workerId -> Deberá contratar de la empresa al trabajador que corresponde al id
-/task/:id?status=x -> Cambiara el estado de una tarea
+  .get("/worker/:id", getWorker)
+  .get("/business/:id", getBusiness)
+  .get("/task/:id", getTask)
+  .delete("/worker/:id", deleteWorker)
+  .delete("/business/:id", deleteBusiness) 
+  .delete("/task/:id", deleteTask) 
+  .get("/worker", getAllWorkers) 
+  .get("/business", getAllBusiness) 
+  .get("/task", getAllTasks) 
+  .post("/worker", postWorker)
+  .post("/business", postBusiness) 
+  .post("/task", postTask)
+  .put("/business/:id/fire/:workerId", fireWorker) 
+  .put("/business/:id/hire/:workerId", hireWorker) 
+  .put("/task/:id", changeStatus) 
 
-  */
 
 miapp.listen(3000);

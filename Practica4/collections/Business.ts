@@ -31,10 +31,10 @@ BusinessSchema.path("tasks").validate( async(tasks: string[]) => {
 
 BusinessSchema.path("workers").validate( async(workers: string[]) => {
     if(workers.length > 10) throw new Error(`Las empresas no pueden tener mas de 10 trabajadores`);
-    const duplicates = new Set(workers);
+    const duplicates = new Set(workers); //Uso set para comprobar duplicados porque set los elimina, asique si el set es mas pequeño significa que habia duplicados en el array
     if(duplicates.size !== workers.length) throw new Error(`Hay trabajadores duplicados en el array`);
     
-    await Promise.all(workers.map( async (worker) => {
+    await Promise.all(workers.map( async (worker) => { //Comprobar que todos los trabajadores existan y esten sin contratar
         const exists = await WorkerModel.findById(worker).exec();
         if(!exists) throw new Error(`No existe el trabajador ${worker}`);
         if(exists.business !== null) throw new Error(`Este trabajador ya esta contratado por otra empresa`);
@@ -44,30 +44,32 @@ BusinessSchema.path("workers").validate( async(workers: string[]) => {
 
 BusinessSchema.post(`save`, async function() {
     const _id = this._id.toString(); 
-    await Promise.all(this.workers.map( async(workerID) => {
+    await Promise.all(this.workers.map( async(workerID) => { //Contratar (asignar esta empresa) a todos los trabajadores de la misma
         await WorkerModel.findOneAndUpdate({_id: workerID}, {business: _id}).exec();
     }));
 })
 
 BusinessSchema.pre(`findOneAndUpdate`,async function(){
+    console.log(`empresa actualizando`)
     const update = this.getUpdate();
     if(!update) throw new Error(`Update is empty`);
 
+    console.log(this.getQuery()["_id"])
+    if(this.getQuery()["_id"] === undefined) return true;
     const business = await BusinessModel.findById(this.getQuery()["_id"]).exec();
     if(!business) throw new Error(`La empresa no existe`);
 
-    //Checkear si el push y pull son de ñadir empleado o añadir tarea
-    if(update["$push"] !== undefined){
-        if(update["$push"]["workers"] !== undefined){
+    if(update["$push"] !== undefined){ //Comprobar si el update es para hacer un push
+        if(update["$push"]["workers"] !== undefined){ //Comprobar si es un push en workers
             if(business.workers.length === 10) throw new Error(`La empresa ya ha alcanzado su limite de empleados (10)`);
             if(business.workers.indexOf(update["$push"]["workers"]) >= 0) throw new Error(`Esta persona ya esta contratada por la empresa`);
 
             const worker = await WorkerModel.findById(update["$push"]["workers"]).exec();
             if(!worker) throw new Error(`El trabajador no existe`);
-            if(worker?.business !== null) throw new Error(`Lo sentimos, este trabajador ya esta contratado por otra empresa`);
+            if(worker?.business !== null) throw new Error(`Lo sentimos, este trabajador ya esta contratado por otra empresa`); 
         }
-    }else if(update["$pull"] !== undefined){
-        if(update["$pull"]["workers"] !== undefined){
+    }else if(update["$pull"] !== undefined){ //Comprobar si el update es un pull
+        if(update["$pull"]["workers"] !== undefined){ //Comprobar si es un pull en workers
             if(business.workers.indexOf(update["$pull"]["workers"]) < 0) throw new Error (`Esta persona no trabaja en esta empresa`);
         }
     }
@@ -76,17 +78,19 @@ BusinessSchema.pre(`findOneAndUpdate`,async function(){
 BusinessSchema.post(`findOneAndUpdate`, async function() {
     const update = this.getUpdate();
     if(!update) throw new Error(`Update is empty`);
-    if(update["$push"] !== undefined){
-        if(update["$push"]["workers"] !== undefined){
+    if(update["$push"] !== undefined){ //En caso de haber hecho push
+        if(update["$push"]["workers"] !== undefined){ //En caso de haber hecho push en workers
             const workerId = update["$push"]["workers"];
             await WorkerModel.findOneAndUpdate({_id: workerId},{business: this.getQuery()["_id"]}).exec();
         }
-    }else if(update["$pull"] !== undefined){
-        if(update["$pull"]["workers"] !== undefined){
+    }else if(update["$pull"] !== undefined){//En caso de haber hecho pull
+        if(update["$pull"]["workers"] !== undefined){ //En caso de haber hecho pull en workers
             const workerId = update["$pull"]["workers"];
             await WorkerModel.findOneAndUpdate({_id: workerId},{business: null}).exec();
+            await TaskModel.findOneAndDelete().where("worker").equals(workerId).exec();
         }
     }
+    console.log(`Empresa actualizada`)
 })
 
 BusinessSchema.pre("findOneAndDelete", async function (){
@@ -95,11 +99,11 @@ BusinessSchema.pre("findOneAndDelete", async function (){
 
     if(!business) throw new Error(`La empresa no existe`);
     
-    await Promise.all(business.tasks.map( async(id) => {
+    await Promise.all(business.tasks.map( async(id) => { //Eliminar todas las tareas asociadas a la empresa
         await TaskModel.findOneAndDelete().where("_id").equals(id).exec();
     }))   
     console.log(`Tareas Eliminadas`);
-    await Promise.all(business.workers.map( async(id) => {
+    await Promise.all(business.workers.map( async(id) => { //Indicarles a todos sus trabajadores que vuelven a no tener empresa
         await WorkerModel.findOneAndUpdate({_id: id},{business: null}).exec();
     }))
     console.log(`Trabajadores actualizados`);
@@ -109,7 +113,7 @@ export type BusinessModelType = {
     name: string,
     tasks: mongoose.Types.ObjectId[],
     workers: mongoose.Types.ObjectId[],
-    //_id?
+    _id: mongoose.Types.ObjectId
 }
 
 export const BusinessModel = mongoose.model<BusinessModelType>(

@@ -36,33 +36,56 @@ TaskSchema.path("business").validate( async(id) => {
     return true
 })
 
+TaskSchema.path("status").validate((status) => {
+    if(status === "Closed") throw new Error(`No se puede crear una tarea con status ya en Closed`)
+})
+
 TaskSchema.pre("save", async function(next){
     const workerId = this.worker.toString();
     const businessId = this.business.toString();
     const worker = await WorkerModel.findById(workerId).exec();
-    if(businessId !== worker?.business.toString()) throw new Error(`La empresa del trabajador no coincide con la indicada`);
+    
+    if(businessId !== worker?.business.toString()) throw new Error(`La empresa del trabajador no coincide con la indicada`); 
     next();
 })
 
 TaskSchema.post("save", async function(){
-    //Añadir la tarea al trabajador y a la empresa
     const taskId = this._id.toString();
     const workerId = this.worker.toString();
     const businessId = this.business.toString();
 
-    await WorkerModel.findOneAndUpdate({_id: workerId}, {$push: {tasks: taskId}}).exec();
-    await BusinessModel.findOneAndUpdate({_id: businessId}, {$push: {tasks: taskId}}).exec();
+    await WorkerModel.findOneAndUpdate({_id: workerId}, {$push: {tasks: taskId}}).exec(); //Añadirle la tarea al trabajador
+    await BusinessModel.findOneAndUpdate({_id: businessId}, {$push: {tasks: taskId}}).exec(); //Añadirle la tarea a la empresa
+    
+})
+
+TaskSchema.pre("findOneAndUpdate", async function (){
+    const status:string = this.getUpdate()["status"]; //Guardar el status que queremos introducir
+    if(!["TO DO","In Progress","In Test","Closed"].includes(status)) throw new Error(`El status no pertenece al grupo de valores validos para este campo`)
+})
+TaskSchema.post("findOneAndUpdate", async function (doc: TaskModelType) {
+    const status:string = this.getUpdate()["$set"]["status"]; //Coger el status que hemos introducido
+    if(status === "Closed"){ //Si se ha llegado a closed borrar la tarea
+        await TaskModel.findOneAndDelete().where("_id").equals(doc._id).exec();
+    }
     
 })
 
 TaskSchema.pre("findOneAndDelete", async function () {
-    //Ver forma de acceder ya desde aqui a los parámetros
-    const taskId: string = this.getQuery()["_id"]; 
-    const task = await TaskModel.findById(taskId.toString()).exec();
+
+    let task, taskId: string;
+    if(this.getQuery()["_id"] !== undefined){ //En caso de que se llegue aqui filtrando por id
+        taskId = this.getQuery()["_id"]; 
+        task = await TaskModel.findById(taskId.toString()).exec();
+    }else{ //En caso de que se llegue aqui filtrando por trabajador asociado a la tarea
+        const workerId: string = this.getQuery()["worker"];
+        task = await TaskModel.findOne().where("worker").equals(workerId.toString()).exec();
+        taskId = task._id.toString();
+    }
     if(!task) throw new Error(`No se encuentra la tarea en la base de datos`)
 
-    await WorkerModel.findOneAndUpdate({_id: task?.worker},{$pull: {tasks: taskId}});
-    await BusinessModel.findOneAndUpdate({_id: task?.business},{$pull: {tasks: taskId}});
+    await WorkerModel.findOneAndUpdate({_id: task.worker.toString()},{$pull: {tasks: taskId}}).exec(); //Eliminar la tarea en el trabajador
+    await BusinessModel.findOneAndUpdate({_id: task.business.toString()},{$pull: {tasks: taskId}}).exec(); //Eliminar la tarea en la empresa
 })
 
 export type TaskModelType = {

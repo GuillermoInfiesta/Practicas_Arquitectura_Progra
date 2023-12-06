@@ -4,7 +4,8 @@ import { TaskModel } from "./Task.ts";
 const Schema = mongoose.Schema;
 
 const WorkerSchema = new Schema({
-    dni: {type: String, required: true, 
+    name: {type: String, required: [true, `Por favor asignale un nombre al empleado`]},
+    dni: {type: String, required: [true, `Por favor asignele un DNI al empleado`], 
         unique: true, //Mirar como añadir mensaje de error
         minLength: [9, `La longitud de un DNI debe ser exactamente de 9 caracteres(8 números y 1 letra)`], 
         maxLength: [9, `La longitud de un DNI debe ser exactamente de 9 caracteres(8 números y 1 letra)`], 
@@ -20,7 +21,7 @@ const WorkerSchema = new Schema({
 WorkerSchema.path("dni").validate((dni: string) => {
     const dniNumbers = parseInt(dni.substring(0,8));
     const i = dniNumbers % 23;
-    const letras = "trwagmyfpdcbnjzsqvhlcke";
+    const letras = "trwagmyfpdcbnjzsqvhlcke"; //La posicion 0 es la letra que corresponde a 0, la posicion 1 es la letra que corresponde al resto 1, etc.
 
     if(dni.at(8) !== letras.at(i)) throw new Error(`La letra del dni no coincide con los numeros del mismo`);
     return true;
@@ -40,33 +41,40 @@ WorkerSchema.path("tasks").validate( async(IDs: string[]) => {
     return true
 })
 
-//En un post save meter a la empresa, una vez está creado
 WorkerSchema.post("save", async function () {
     const business_id = this.business?.toString();
     const _id = this._id.toString();
-    await BusinessModel.findOneAndUpdate({_id: business_id}, {$push: {workers: _id}}).exec();
+    await BusinessModel.findOneAndUpdate({_id: business_id}, {$push: {workers: _id}}).exec(); //Si al crearlo decimos que tiene una empresa, en la empresa añadir el trabajador
 })
 
+WorkerSchema.pre("findOneAndUpdate", function(){
+    console.log(`Trabajador actualizando`)
+})
+
+WorkerSchema.post("findOneAndUpdate", function(){
+    console.log(`Trabajador actualizado`)
+})
 
 WorkerSchema.pre('findOneAndDelete', async function(){
     const workerId = this.getQuery()["_id"];
     const worker = await WorkerModel.findById(workerId).exec();
     if(!worker) throw new Error(`No se encuentra el trabajador en la base de datos`);
     
-    await BusinessModel.findOneAndUpdate({_id: worker?.business},{$pull : {workers: workerId}}).exec();
+    await BusinessModel.findOneAndUpdate({_id: worker?.business},{$pull : {workers: workerId}}).exec(); //Borramos al trabajador de su empresa
     console.log(`Trabajador eliminado de empresa`);
 
-    await Promise.all(worker.tasks.map(async(id) => {
-        await TaskModel.findByIdAndDelete().where("_id").equals(id).exec();
+    await Promise.all(worker.tasks.map(async(id) => { //Borramos todas las tareas que correspondian a este trabajador
+        await TaskModel.findOneAndDelete().where("_id").equals(id).exec();
     }))
     console.log(`Tareas eliminadas`)
 })
 
 export type WorkerModelType = {
+    name: string,
     dni: string, 
     business: mongoose.Types.ObjectId,
     tasks: mongoose.Types.ObjectId[],
-    //_id?
+    _id: mongoose.Types.ObjectId
 }
 
 export const WorkerModel = mongoose.model<WorkerModelType>(
