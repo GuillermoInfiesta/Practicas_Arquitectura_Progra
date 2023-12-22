@@ -34,7 +34,8 @@ export const Mutation = {
     deleteClient: async(_:unknown, args: {_id: string}): Promise<string> => {
         try{
             const {_id} = args;
-            await ClientModel.findOneAndDelete().where(`_id`).equals(_id).exec();
+            const deleted = await ClientModel.findOneAndDelete().where(`_id`).equals(_id).exec();
+            if(!deleted) throw new Error(`El cliente no existe`);
             return `Cliente eliminado`;
         }catch(e){
             return e.message;
@@ -43,7 +44,8 @@ export const Mutation = {
     deleteDriver: async(_:unknown, args: {_id: string}): Promise<string> => {
         try{
             const {_id} = args;
-            await DriverModel.findOneAndDelete().where(`_id`).equals(_id).exec();
+            const deleted = await DriverModel.findOneAndDelete().where(`_id`).equals(_id).exec();
+            if(!deleted) throw new Error(`El conductor no existe`);
             return `Conductor eliminado`;
         }catch(e){
             return e.message;
@@ -64,7 +66,8 @@ export const Mutation = {
     deleteCard: async(_:unknown, args: {clientId: string, number: string}): Promise<string> => {
         try{
             const {clientId, number} = args;
-            await ClientModel.findOneAndUpdate({_id: clientId},{$pull: {cards: {number: number}}}).exec(); //Ver como hacer para pull por numero de la tarjeta
+            const updated = await ClientModel.findOneAndUpdate({_id: clientId},{$pull: {cards: {number: number}}}).exec(); //Ver como hacer para pull por numero de la tarjeta
+            if(!updated) throw new Error(`El cliente no existe`);
             return `Tarjeta eliminada`;
         }catch(e){
             return e.message;
@@ -73,7 +76,8 @@ export const Mutation = {
     changeTravelStatus: async(_:unknown, args: {_id: string}): Promise<string> => {
         try{
             const {_id} = args;
-            await TravelModel.findOneAndUpdate({_id: _id},{}).exec() //Avanzar el status. Waiting -> On Progress -> Finished
+            const updated = await TravelModel.findOneAndUpdate({_id: _id},{}).exec() //Avanzar el status. Waiting -> On Progress -> Finished
+            if(!updated) throw new Error(`El viaje no existe`);
             return `Status updated`;
         }catch(e){
             return e.message;

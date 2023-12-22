@@ -25,8 +25,6 @@ TravelSchema.path("client").validate(async function(client){
     
     const availableCards = exists.cards.filter((card) => card.money >= this.money); //De las tarjetas del cliente, guardar en `availableCards` las que tengan suficiente dinero para el viaje
     if(availableCards.length === 0) throw new Error(`El cliente no tiene ninguna tarjeta con la cual pueda pagar`); //Si `availableCards` está vacio significa que el cliente no puede pagar
-    exists.cards[exists.cards.indexOf(availableCards[0])].money -= this.money; //Quitamos el dinero de cualquiera de las tarjetas disponibles
-    await exists.save({validateBeforeSave: false}); //Actualizamos el cliente para que se guarden los cambios de la tarjeta con la que pagó
     return true;
 })
 
@@ -44,8 +42,12 @@ TravelSchema.path("date").validate((date) => { //Con una expresión regular comp
 
 TravelSchema.post("save", async function () {
     //Al añadir un viaje lo añadimos también a los arrays de viajes del cliente y conductor
-    await ClientModel.findOneAndUpdate({_id: this.client},{$push: {travels: this._id}}).exec()
+    const client = await ClientModel.findOneAndUpdate({_id: this.client},{$push: {travels: this._id}}).exec()
     await DriverModel.findOneAndUpdate({_id: this.driver},{$push: {travels: this._id}}).exec()
+
+    const availableCards = client.cards.filter((card) => card.money >= this.money); //De las tarjetas del cliente, guardar en `availableCards` las que tengan suficiente dinero para el viaje
+    client.cards[client.cards.indexOf(availableCards[0])].money -= this.money; //Quitamos el dinero de cualquiera de las tarjetas disponibles
+    await client.save({validateBeforeSave: false}); //Actualizamos el cliente para que se guarden los cambios de la tarjeta con la que pagó
 })
 
 TravelSchema.pre("findOneAndUpdate", async function () {

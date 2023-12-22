@@ -34,9 +34,8 @@ ClientSchema.path("cards.number").validate(async function(number){ //Con una exp
     const expReg = /^([0-9]{16})$/;
     if(!expReg.test(number)) throw new Error(`El número de la tarjeta debe de ser de exáctamente 16 caracteres`);
 
-    const using = await ClientModel.find({cards: {$elemMatch : {number: number}}}).exec();
-    if(using.length !== 0) throw new Error(`Este número de tarjeta ya está en uso`); 
-    //Checkear que no esté en uso ese Numero de tarjeta
+    const using = await ClientModel.find({cards: {$elemMatch : {number: number}}}).exec(); //Coger clientes que tengan una tarjeta cuyo número coincida con el nuestro
+    if(using.length !== 0) throw new Error(`Este número de tarjeta ya está en uso`);  //Si using no está vacio significa que el número de tarjeta ya está en uso
     return true;
 })
 
@@ -55,6 +54,7 @@ ClientSchema.path("cards.expirity").validate((expirity) => { //Con una expresió
     if(!expReg.test(expirity)) throw new Error(`La fecha debe tener la estructura MM/YYYY`);
     return true; 
 })
+
 
 ClientSchema.pre("findOneAndDelete", async function (){
     const id = this.getQuery()["_id"];
