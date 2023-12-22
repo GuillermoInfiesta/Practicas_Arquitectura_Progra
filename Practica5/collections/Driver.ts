@@ -12,7 +12,7 @@ const DriverSchema = new Schema({
         maxLength: [24, `La longitud de una id de mongo debe de ser de exactamente 24 caracteres hexadecimales`]}]
 })
 
-DriverSchema.path("email").validate((email) => {
+DriverSchema.path("email").validate((email) => { //Con una expresion regular validamos que email tenga la estructura de un correo electronico 
     const expReg = /^(\w[\w-\.]*@[\w]+\.[\w]+)?$/;
     if(!expReg.test(email)) throw new Error(`El correo no coincide con la expresión regular`);
     return true; 
@@ -21,8 +21,10 @@ DriverSchema.path("email").validate((email) => {
 
 DriverSchema.pre("findOneAndDelete", async function (){
     const id = this.getQuery()["_id"];
+
+    //Antes de borrar el Conductor eliminaremos los viajes que estén asociados a el
     const driver = await DriverModel.findById(id).exec();
-    await TravelModel.deleteMany({_id: {$in: driver?.travels}}).exec();
+    await TravelModel.deleteMany({_id: {$in: driver?.travels}}).exec(); //Borrar todos los viajes cuyo _id esté en el array `travels` del conductor
 })
 
 

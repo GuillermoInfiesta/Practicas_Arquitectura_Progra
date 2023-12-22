@@ -1,6 +1,8 @@
 import {ApolloServer} from "npm:@apollo/server@4.9.5"
 import {startStandaloneServer} from "npm:@apollo/server@4.9.5/standalone"
-import { gqlSchema, Query, Mutation } from "./graphQL/mainGraph.ts"
+import { gqlSchema} from "./graphQL/mainGraph.ts"
+import { Query } from "./graphQL/Query.ts";
+import { Mutation } from "./graphQL/Mutation.ts";
 import {load} from "https://deno.land/std@0.204.0/dotenv/mod.ts";
 import mongoose from "npm:mongoose@7.6.3"
 import express from "npm:express@4.18.2"
